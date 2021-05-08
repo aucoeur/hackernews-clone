@@ -185,5 +185,7 @@ pip-selfcheck.json
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,node,venv
-n
+
 server/prisma/dev.db
+server/prisma/dev.db-journal
+.vscode/
