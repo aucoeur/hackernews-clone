@@ -41,7 +41,7 @@ async function post(parent, args, context, info) {
   return await context.prisma.link.create({
     data: {
       url: args.url,
-      description: args.description,
+      description: args.description || "",
       postedBy: { connect: { id: userId } },
     }
   })
