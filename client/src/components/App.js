@@ -5,8 +5,9 @@ import './../styles/App.css'
 import Header from './Header'
 import LinkList from './LinkList'
 import CreateLink from './CreateLink'
+import Login from './Login'
 
-function App() {
+const App = () => {
   return (
     <div className="center w85">
       <Header />
@@ -18,10 +19,11 @@ function App() {
             path="/create"
             component={CreateLink}
           />
+          <Route exact path="/login" component={Login} />
         </Switch>
       </div>
     </div>
   );
-}
+};
 
 export default App;
