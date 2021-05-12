@@ -13,7 +13,7 @@ generator client {
 model Link {
   id          Int       @id @default(autoincrement())
   createdAt   DateTime  @default(now())
-  description String
+  description String?
   url         String
   postedBy    User?     @relation(fields: [postedById], references: [id])
   postedById  Int?

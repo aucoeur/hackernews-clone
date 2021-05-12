@@ -24,6 +24,10 @@ type Query {
   link(id: ID!): Link
 }
 
+type Subscription {
+  newLink: Link
+}
+
 type User {
   id: ID!
   name: String

@@ -2,15 +2,25 @@ import React from 'react'
 import { useQuery, gql } from '@apollo/client'
 import Link from './Link'
 
-const FEED_QUERY = gql`
+export const FEED_QUERY = gql`
   {
     feed {
       id
-      links {
+      url {
         id
         createdAt
         url
         description
+        postedBy {
+          id
+          name
+        }
+        votes {
+          id
+          user {
+            id
+          }
+        }
       }
     }
   }
@@ -20,16 +30,21 @@ const LinkList = () => {
   const { data } = useQuery(FEED_QUERY)
 
   return (
-    <div>
-      {data && (
-        <>
-          {data.feed.links.map((link) => {
-            <Link key={link.id} link={link} />
-          })}
-        </>
-      )}
-    </div>
-  );
+  <div>
+    {data && (
+      <>
+        {data.feed.links.map((link, index) =>
+          (
+            <div>
+              <Link key={link.id} link={link} index={index} />
+            </div>
+          )
+        )
+      }
+      </>
+    )}
+  </div>
+);
 };
 
 export default LinkList;
