@@ -8,6 +8,7 @@ const Query = require('./resolvers/Query')
 const Mutation = require('./resolvers/Mutation')
 const Subscription = require('./resolvers/Subscription')
 const User = require('./resolvers/User')
+const Vote = require('./resolvers/Vote');
 const { getUserId } = require('./utils');
 
 const resolvers = {
@@ -38,8 +39,26 @@ const server = new ApolloServer({
           ? getUserId(req)
           : null
     };
+  },
+  subscriptions: {
+    onConnect: (connectionParams) => {
+      if (connectionParams.authToken) {
+        return {
+          prisma,
+          userId: getUserId(
+            null,
+            connectionParams.authToken
+          )
+        };
+      } else {
+        return {
+          prisma
+        };
+      }
+    }
   }
 });
+
 
 server
   .listen()
