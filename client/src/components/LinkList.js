@@ -1,15 +1,20 @@
-import React from 'react'
-import { useQuery, gql } from '@apollo/client'
-import { useHistory } from 'react-router'
+import React from 'react';
+import Link from './Link';
+import { useHistory } from 'react-router';
 
-import Link from './Link'
 import { LINKS_PER_PAGE } from '../constants';
 
+
+import { useQuery, gql } from '@apollo/client';
+
 export const FEED_QUERY = gql`
-  {
-    feed {
-      id
-      url {
+  query FeedQuery(
+    $take: Int
+    $skip: Int
+    $orderBy: LinkOrderByInput
+  ) {
+    feed(take: $take, skip: $skip, orderBy: $orderBy) {
+      links {
         id
         createdAt
         url
@@ -25,6 +30,7 @@ export const FEED_QUERY = gql`
           }
         }
       }
+      count
     }
   }
 `;
@@ -77,13 +83,6 @@ const NEW_VOTES_SUBSCRIPTION = gql`
   }
 `;
 
-const getQueryVariables = (isNewPage, page) => {
-    const skip = isNewPage ? (page - 1) * LINKS_PER_PAGE : 0;
-    const take = isNewPage ? LINKS_PER_PAGE : 100;
-    const orderBy = { createdAt: 'desc' };
-    return { take, skip, orderBy };
-};
-
 const getLinksToRender = (isNewPage, data) => {
     if (isNewPage) {
       return data.feed.links;
@@ -95,28 +94,35 @@ const getLinksToRender = (isNewPage, data) => {
     return rankedLinks;
   };
 
+const getQueryVariables = (isNewPage, page) => {
+  const skip = isNewPage ? (page - 1) * LINKS_PER_PAGE : 0;
+  const take = isNewPage ? LINKS_PER_PAGE : 100;
+  const orderBy = { createdAt: 'desc' };
+  return { take, skip, orderBy };
+};
+
 const LinkList = () => {
-    const history = useHistory();
-    const isNewPage = history.location.pathname.includes(
-      'new'
-    );
-    const pageIndexParams = history.location.pathname.split(
-      '/'
-    );
-    const page = parseInt(
-      pageIndexParams[pageIndexParams.length - 1]
-    );
+  const history = useHistory();
+  const isNewPage = history.location.pathname.includes(
+    'new'
+  );
+  const pageIndexParams = history.location.pathname.split(
+    '/'
+  );
+  const page = parseInt(
+    pageIndexParams[pageIndexParams.length - 1]
+  );
 
-    const pageIndex = page ? (page - 1) * LINKS_PER_PAGE : 0;
+  const pageIndex = page ? (page - 1) * LINKS_PER_PAGE : 0;
 
-    const {
-      data,
-      loading,
-      error,
-      subscribeToMore
-    } = useQuery(FEED_QUERY, {
-      variables: getQueryVariables(isNewPage, page)
-    });
+  const {
+    data,
+    loading,
+    error,
+    subscribeToMore
+  } = useQuery(FEED_QUERY, {
+    variables: getQueryVariables(isNewPage, page)
+  });
 
   subscribeToMore({
     document: NEW_LINKS_SUBSCRIPTION,

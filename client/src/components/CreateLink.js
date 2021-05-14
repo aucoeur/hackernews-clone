@@ -17,15 +17,16 @@ const CREATE_LINK_MUTATION = gql`
       description
     }
   }
-`
+`;
 
 const CreateLink = () => {
+    const history = useHistory();
+
   const [formState, setFormState] = useState({
     description: '',
     url: ''
-  })
+  });
 
-  const history = useHistory()
   const [createLink] = useMutation(CREATE_LINK_MUTATION, {
     variables: {
       description: formState.description,
@@ -64,39 +65,42 @@ const CreateLink = () => {
 
   return (
     <div>
-      <form onSubmit={(e) => {
-        e.preventDefault()
-        createLink()
+      <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        createLink();
       }}
-      >
+    >
         <div className="flex flex-column mt3">
           <input
             className="mb2"
-            type="text"
-            value= {formState.description}
-            onChange= {(e) => setFormState({
-              ...formState,
-              description: e.target.value
+            value={formState.description}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                description: e.target.value
               })
             }
+            type="text"
             placeholder="A description for the link"
           />
           <input
             className="mb2"
-            type="text"
-            value= {formState.url}
-            onChange= {(e) => setFormState({
-              ...formState,
-              url: e.target.value
+            value={formState.url}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                url: e.target.value
               })
             }
-            placeholder="A URL for the link"
+            type="text"
+            placeholder="The URL for the link"
           />
         </div>
         <button type="submit">Submit</button>
       </form>
     </div>
-  )
-}
+  );
+};
 
 export default CreateLink;
