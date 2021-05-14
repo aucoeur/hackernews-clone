@@ -1,8 +1,7 @@
 import React from 'react';
-import { useMutation, gql } from '@apollo/client'
-import { AUTH_TOKEN, LINKS_PER_PAGE } from '../constants'
-import { timeDifferenceForDate } from '../utils'
-
+import { useMutation, gql } from '@apollo/client';
+import { AUTH_TOKEN, LINKS_PER_PAGE } from '../constants';
+import { timeDifferenceForDate } from '../utils';
 import { FEED_QUERY } from './LinkList';
 
 const VOTE_MUTATION = gql`
@@ -29,13 +28,22 @@ const Link = (props) => {
   const { link } = props;
   const authToken = localStorage.getItem(AUTH_TOKEN);
 
+  const take = LINKS_PER_PAGE;
+  const skip = 0;
+  const orderBy = { createdAt: 'desc' };
+
   const [vote] = useMutation(VOTE_MUTATION, {
-      variables: {
-        linkId: link.id
-      },
+    variables: {
+      linkId: link.id
+    },
     update(cache, { data: { vote } }) {
       const { feed } = cache.readQuery({
-        query: FEED_QUERY
+        query: FEED_QUERY,
+        variables: {
+          take,
+          skip,
+          orderBy
+        }
       });
 
       const updatedLinks = feed.links.map((feedLink) => {
@@ -59,10 +67,6 @@ const Link = (props) => {
     }
   });
 
-  const take = LINKS_PER_PAGE;
-  const skip = 0;
-  const orderBy = { createdAt: 'desc' };
-
   return (
     <div className="flex mt2 items-start">
       <div className="flex items-center">
@@ -71,7 +75,8 @@ const Link = (props) => {
           <div
             className="ml1 gray f11"
             style={{ cursor: 'pointer' }}
-            onClick={vote} >
+            onClick={vote}
+          >
             ▲
           </div>
         )}
@@ -84,13 +89,12 @@ const Link = (props) => {
           <div className="f6 lh-copy gray">
             {link.votes.length} votes | by{' '}
             {link.postedBy ? link.postedBy.name : 'Unknown'}{' '}
-            { timeDifferenceForDate(link.createdAt) }
+            {timeDifferenceForDate(link.createdAt)}
           </div>
         )}
       </div>
     </div>
   );
 };
-
 
 export default Link;
